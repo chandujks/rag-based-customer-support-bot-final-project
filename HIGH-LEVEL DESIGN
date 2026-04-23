@@ -1,0 +1,119 @@
+1. System Overview
+🔹 Problem Definition
+
+Customer support teams handle repetitive queries from large documentation (FAQs, manuals, policies). Traditional bots fail because:
+
+They don’t use updated knowledge
+They hallucinate answers
+They lack escalation mechanisms
+🔹 Proposed Solution
+
+A RAG-based Customer Support Assistant that:
+
+Reads a PDF knowledge base
+Retrieves relevant chunks using embeddings
+Generates contextual answers using LLM
+Uses LangGraph workflow for decision-making
+Escalates complex queries via Human-in-the-Loop (HITL)
+🔹 Scope
+
+✔ Single PDF knowledge base
+✔ Query answering
+✔ Intent-based routing
+✔ HITL escalation
+❌ No multilingual / voice (future scope)
+
+2. Architecture Diagram 
+
+User (CLI/Web UI)
+        |
+        v
+Query Input Layer
+        |
+        v
+LangGraph Workflow Engine
+   |             |
+   |             v
+   |       HITL Escalation
+   v
+Retrieval Pipeline
+   |
+   v
+Vector DB (ChromaDB)
+   |
+   v
+LLM Processing Layer
+   |
+   v
+Response Output
+
+
+3. Component Description
+📄 Document Loader
+Loads PDF using PyPDFLoader
+Extracts raw text
+✂️ Chunking Strategy
+Recursive Character Splitter
+Chunk size: 500–1000 tokens
+Overlap: 100–200 tokens
+🧠 Embedding Model
+Example: sentence-transformers/all-MiniLM-L6-v2
+Converts text → vectors
+🗄 Vector Store
+ChromaDB
+Stores embeddings + metadata
+Enables similarity search
+🔍 Retriever
+Top-K retrieval (k=3 or 5)
+Cosine similarity
+🤖 LLM
+Example: OpenAI / Groq / LLaMA
+Generates final answer
+🔁 Graph Workflow Engine
+LangGraph
+Controls flow using nodes & edges
+🎯 Routing Layer
+Decides:
+Answer directly
+Escalate to human
+👨‍💻 HITL Module
+Sends query to human agent
+Integrates human response
+
+4. Data Flow
+📥 Ingestion Flow
+PDF → Loader → Chunking → Embeddings → ChromaDB
+📤 Query Flow
+User Query → Embed → Retrieve chunks → LLM → Response
+🔄 Full Lifecycle
+User asks question
+Query embedded
+Relevant chunks retrieved
+LLM generates answer
+Confidence evaluated
+If low → HITL escalation
+
+5. Technology Choices
+Why ChromaDB?
+Lightweight
+Easy local setup
+Fast similarity search
+Why LangGraph?
+Stateful workflows
+Supports branching logic
+Ideal for HITL systems
+LLM Choice
+OpenAI GPT / LLaMA / Groq
+Trade-off: cost vs performance
+
+
+6. Scalability Considerations
+📈 Large Documents
+Incremental indexing
+Batch embedding
+⚡ High Query Load
+Caching layer
+Async processing
+⏱ Latency
+Reduce chunk size
+Use smaller embedding model
