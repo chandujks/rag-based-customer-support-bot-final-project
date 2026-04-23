@@ -1,0 +1,102 @@
+1. Module-Level Design
+📦 Modules
+DocumentProcessingModule
+ChunkingModule
+EmbeddingModule
+VectorStorageModule
+RetrievalModule
+QueryProcessingModule
+GraphExecutionModule
+HITLModule
+
+
+2. Data Structures
+📄 Document
+{
+  "doc_id": "123",
+  "text": "raw content"
+}
+✂️ Chunk
+{
+  "chunk_id": "c1",
+  "text": "chunk text",
+  "metadata": {
+    "source": "pdf",
+    "page": 2
+  }
+}
+🧠 Embedding
+{
+  "vector": [0.12, 0.98, ...],
+  "chunk_id": "c1"
+}
+❓ Query-Response
+{
+  "query": "What is refund policy?",
+  "retrieved_chunks": [],
+  "response": "",
+🔄 Graph State
+{
+  "query": "",
+  "context": [],
+  "response": "",
+  "confidence": 0.0,
+  "escalate": false
+}
+
+
+3. Workflow Design (LangGraph)
+Nodes:
+Input Node
+Processing Node
+Output Node
+Flow:
+Input → Retrieve → Generate → Evaluate → Output
+                          |
+                          v
+                        HITL
+
+
+
+4. Conditional Routing Logic
+✔ Answer if:
+Confidence > 0.7
+Context available
+🚨 Escalate if:
+Confidence < 0.5
+No relevant chunks
+Complex/multi-part query
+
+
+
+5. HITL Design
+When Triggered:
+Low confidence
+Missing context
+Flow:
+Query sent to human dashboard
+Human writes response
+Response stored
+Returned to user
+
+
+6. API / Interface Design
+Input
+{
+  "query": "What is warranty?"
+}
+Output
+{
+  "answer": "Warranty is 1 year...",
+  "source_chunks": [],
+  "confidence": 0.82,
+  "escalated": false
+}
+
+
+7. Error Handling
+❌ No chunks found → fallback message
+❌ LLM failure → retry mechanism
+❌ Empty PDF → validation
+  "confidence": 0.85
+}
